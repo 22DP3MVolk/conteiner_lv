@@ -1,0 +1,258 @@
+{% extends 'base/base.html' %}
+
+{% block title %}{{ title }} | FreightMatch{% endblock %}
+
+{% block extra_css %}
+<style>
+    .hero-section {
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+        color: white;
+        padding: 3rem 0;
+        border-radius: 0 0 30px 30px;
+        margin-bottom: 2rem;
+    }
+    
+    .stats-card {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 15px;
+        padding: 1rem;
+        text-align: center;
+        backdrop-filter: blur(10px);
+    }
+    
+    .stats-number {
+        font-size: 2rem;
+        font-weight: bold;
+    }
+    
+    .listing-card {
+        transition: transform 0.2s, box-shadow 0.2s;
+        border: none;
+        border-radius: 12px;
+        overflow: hidden;
+        height: 100%;
+    }
+    
+    .listing-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+    }
+    
+    .card-header {
+        padding: 0.75rem 1rem;
+        font-weight: 600;
+    }
+    
+    .card-header.cargo {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        color: white;
+    }
+    
+    .card-header.transport {
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+        color: white;
+    }
+    
+    .listing-stats {
+        font-size: 0.85rem;
+        color: #6c757d;
+    }
+    
+    .listing-stats i {
+        margin-right: 5px;
+    }
+    
+    .price-badge {
+        background: var(--accent-color);
+        color: white;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-weight: bold;
+        font-size: 1rem;
+    }
+    
+    .route-info {
+        font-size: 0.9rem;
+        margin: 0.5rem 0;
+    }
+    
+    .route-info i {
+        color: var(--accent-color);
+        width: 20px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="hero-section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <h1 class="display-4 fw-bold mb-3">Find Loads & Transport</h1>
+                <p class="lead mb-0">Browse all available listings from shippers and carriers</p>
+            </div>
+            <div class="col-lg-4">
+                <div class="row">
+                    <div class="col-4">
+                        <div class="stats-card">
+                            <div class="stats-number">{{ stats.total_loads }}</div>
+                            <small>Active Loads</small>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="stats-card">
+                            <div class="stats-number">{{ stats.total_trucks }}</div>
+                            <small>Trucks</small>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="stats-card">
+                            <div class="stats-number">{{ stats.total_companies }}</div>
+                            <small>Companies</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <!-- Results Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold" style="color: var(--primary-color);">
+            <i class="bi bi-grid-3x3-gap-fill"></i> All Listings
+        </h2>
+        <span class="badge bg-secondary">{{ page_obj.paginator.count }} listings found</span>
+    </div>
+    
+    <!-- Listings Grid -->
+    {% if listings %}
+    <div class="row">
+        {% for listing in listings %}
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="listing-card card h-100">
+                <div class="card-header {{ listing.type }}">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span>
+                            <i class="{{ listing.type_icon }}"></i> {{ listing.type_name }}
+                        </span>
+                        <small><i class="bi bi-eye"></i> {{ listing.views }}</small>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">{{ listing.title|truncatechars:40 }}</h5>
+                    <p class="card-text text-muted small">{{ listing.description|truncatechars:80 }}</p>
+                    
+                    <div class="route-info">
+                        <div><i class="bi bi-geo-alt-fill"></i> From: <strong>{{ listing.location_from }}</strong></div>
+                        <div><i class="bi bi-geo-alt"></i> To: <strong>{{ listing.location_to }}</strong></div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between align-items-center mt-3">
+                        <div class="listing-stats">
+                            <i class="bi bi-building"></i> {{ listing.company|truncatechars:20 }}<br>
+                            <i class="bi bi-calendar"></i> {{ listing.date|date:"M d, Y" }}
+                        </div>
+                        <div class="price-badge">
+                            {% if listing.price %}
+                                ${{ listing.price|floatformat:0 }}
+                                {% if listing.type == 'cargo' %}
+                                    <small>total</small>
+                                {% else %}
+                                    <small>/km</small>
+                                {% endif %}
+                            {% else %}
+                                Contact
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="mt-2">
+                        <span class="badge bg-secondary">
+                            <i class="bi bi-box"></i> {{ listing.weight }} tons
+                        </span>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent">
+                    <a href="{{ listing.detail_url }}" class="btn btn-outline-primary w-100">
+                        <i class="bi bi-eye"></i> View Details
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <!-- Pagination -->
+    {% if page_obj.has_other_pages %}
+    <nav aria-label="Page navigation" class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}">
+                    <i class="bi bi-chevron-left"></i> Previous
+                </a>
+            </li>
+            {% endif %}
+            
+            {% for num in page_obj.paginator.page_range %}
+                {% if page_obj.number == num %}
+                <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                </li>
+                {% endif %}
+            {% endfor %}
+            
+            {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}">
+                    Next <i class="bi bi-chevron-right"></i>
+                </a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+    
+    {% else %}
+    <!-- No Results -->
+    <div class="text-center py-5">
+        <i class="bi bi-inbox" style="font-size: 4rem; color: #dee2e6;"></i>
+        <h3 class="mt-3">No listings found</h3>
+        <p class="text-muted">Check back later for new loads and transport offers.</p>
+    </div>
+    {% endif %}
+    
+    <!-- Quick Links -->
+    <div class="row mt-5">
+        <div class="col-md-6 mb-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <i class="bi bi-box-seam" style="font-size: 2rem; color: var(--accent-color);"></i>
+                    <h4>Looking for Loads?</h4>
+                    <p class="text-muted">Browse detailed cargo listings from shippers</p>
+                    <a href="{% url 'browse_loads' %}" class="btn btn-outline-primary">
+                        Browse Loads <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <i class="bi bi-truck" style="font-size: 2rem; color: var(--accent-color);"></i>
+                    <h4>Need Transport?</h4>
+                    <p class="text-muted">Find available trucks and vehicles</p>
+                    <a href="{% url 'browse_trucks' %}" class="btn btn-outline-primary">
+                        Browse Trucks <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,270 @@
+{% extends 'base/base.html' %}
+
+{% block title %}{{ title }} | FreightMatch{% endblock %}
+
+{% block extra_css %}
+<style>
+    .loads-table {
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    
+    .loads-table thead {
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+        color: white;
+    }
+    
+    .loads-table thead th {
+        padding: 1rem;
+        font-weight: 600;
+        border: none;
+    }
+    
+    .loads-table tbody tr:hover {
+        background-color: #f8f9fa;
+    }
+    
+    .loads-table td {
+        padding: 1rem;
+        vertical-align: middle;
+    }
+    
+    .status-badge {
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        display: inline-block;
+    }
+    
+    .status-open {
+        background: #d4edda;
+        color: #155724;
+    }
+    
+    .status-reserved {
+        background: #fff3cd;
+        color: #856404;
+    }
+    
+    .status-in_transit {
+        background: #d1ecf1;
+        color: #0c5460;
+    }
+    
+    .status-delivered {
+        background: #cce5ff;
+        color: #004085;
+    }
+    
+    .status-closed {
+        background: #f8d7da;
+        color: #721c24;
+    }
+    
+    .status-cancelled {
+        background: #e2e3e5;
+        color: #383d41;
+    }
+    
+    .btn-action {
+        padding: 4px 8px;
+        margin: 0 2px;
+        font-size: 0.85rem;
+    }
+    
+    .filter-bar {
+        background: white;
+        border-radius: 12px;
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        background: white;
+        border-radius: 12px;
+    }
+    
+    .empty-state i {
+        font-size: 4rem;
+        color: #dee2e6;
+        margin-bottom: 1rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="display-5 fw-bold" style="color: var(--primary-color);">
+                <i class="bi bi-list-ul"></i> My Loads
+            </h1>
+            <p class="text-muted">Manage your cargo listings</p>
+        </div>
+        <a href="{% url 'post_load' %}" class="btn btn-primary btn-lg">
+            <i class="bi bi-plus-circle"></i> Post New Load
+        </a>
+    </div>
+    
+    <!-- Filter Bar -->
+    <div class="filter-bar">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <div class="d-flex gap-2 align-items-center">
+                    <label class="fw-bold mb-0">Filter by status:</label>
+                    <div class="btn-group" role="group">
+                        <a href="{% url 'my_loads' %}" class="btn btn-outline-secondary btn-sm {% if not request.GET.status %}active{% endif %}">
+                            All
+                        </a>
+                        <a href="?status=open" class="btn btn-outline-success btn-sm {% if request.GET.status == 'open' %}active{% endif %}">
+                            Open
+                        </a>
+                        <a href="?status=reserved" class="btn btn-outline-warning btn-sm {% if request.GET.status == 'reserved' %}active{% endif %}">
+                            Reserved
+                        </a>
+                        <a href="?status=in_transit" class="btn btn-outline-info btn-sm {% if request.GET.status == 'in_transit' %}active{% endif %}">
+                            In Transit
+                        </a>
+                        <a href="?status=delivered" class="btn btn-outline-primary btn-sm {% if request.GET.status == 'delivered' %}active{% endif %}">
+                            Delivered
+                        </a>
+                        <a href="?status=closed" class="btn btn-outline-danger btn-sm {% if request.GET.status == 'closed' %}active{% endif %}">
+                            Closed
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 text-end">
+                <span class="text-muted">
+                    <i class="bi bi-box-seam"></i> Total: {{ page_obj.paginator.count }} loads
+                </span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Loads Table -->
+    {% if cargoes %}
+    <div class="table-responsive loads-table">
+        <table class="table table-hover mb-0">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Title</th>
+                    <th>Route</th>
+                    <th>Pickup Date</th>
+                    <th>Weight</th>
+                    <th>Price</th>
+                    <th>Status</th>
+                    <th>Views</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for cargo in cargoes %}
+                <tr>
+                    <td>#{{ cargo.id }}</td>
+                    <td>
+                        <strong>{{ cargo.title|truncatechars:30 }}</strong>
+                        <br>
+                        <small class="text-muted">{{ cargo.cargo_type.name }}</small>
+                    </td>
+                    <td>
+                        <i class="bi bi-geo-alt"></i> {{ cargo.pickup_city }}<br>
+                        <i class="bi bi-arrow-right"></i> {{ cargo.delivery_city }}
+                    </td>
+                    <td>{{ cargo.pickup_date|date:"M d, Y" }}</td>
+                    <td>{{ cargo.weight }} t</td>
+                    <td>
+                        {% if cargo.price %}
+                            ${{ cargo.price|floatformat:2 }}
+                            {% if cargo.price_negotiable %}
+                                <br><small class="text-success">negotiable</small>
+                            {% endif %}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                    <td>
+                        <span class="status-badge status-{{ cargo.status.code }}">
+                            {{ cargo.status.name }}
+                        </span>
+                    </td>
+                    <td>
+                        <i class="bi bi-eye"></i> {{ cargo.views_count }}<br>
+                        <i class="bi bi-chat"></i> {{ cargo.contact_count }}
+                    </td>
+                    <td>
+                        <div class="btn-group" role="group">
+                            <a href="{% url 'load_detail' cargo.id %}" class="btn btn-sm btn-outline-info btn-action" title="View">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                            <a href="{% url 'edit_load' cargo.id %}" class="btn btn-sm btn-outline-primary btn-action" title="Edit">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            <a href="{% url 'delete_load' cargo.id %}" class="btn btn-sm btn-outline-danger btn-action" title="Delete" 
+                               onclick="return confirm('Are you sure you want to delete this load?');">
+                                <i class="bi bi-trash"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    <!-- Pagination -->
+    {% if page_obj.has_other_pages %}
+    <nav aria-label="Page navigation" class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}">
+                    <i class="bi bi-chevron-left"></i> Previous
+                </a>
+            </li>
+            {% endif %}
+            
+            {% for num in page_obj.paginator.page_range %}
+                {% if page_obj.number == num %}
+                <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ num }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}">
+                        {{ num }}
+                    </a>
+                </li>
+                {% endif %}
+            {% endfor %}
+            
+            {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}">
+                    Next <i class="bi bi-chevron-right"></i>
+                </a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+    
+    {% else %}
+    <!-- Empty State -->
+    <div class="empty-state">
+        <i class="bi bi-box-seam"></i>
+        <h3>No loads found</h3>
+        <p class="text-muted">You haven't posted any loads yet.</p>
+        <a href="{% url 'post_load' %}" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Post Your First Load
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

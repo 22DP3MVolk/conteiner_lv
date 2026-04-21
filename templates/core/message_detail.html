@@ -1,0 +1,130 @@
+{% extends 'base/base.html' %}
+
+{% block title %}{{ title }} | FreightMatch{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <!-- Message Thread -->
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0">
+                            <i class="bi bi-chat-dots"></i> {{ message.subject }}
+                        </h4>
+                        <div>
+                            <a href="{% url 'delete_message' message.id %}" class="btn btn-sm btn-light"
+                               onclick="return confirm('Delete this message?');">
+                                <i class="bi bi-trash"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <!-- Message Info -->
+                    <div class="mb-4 pb-3 border-bottom">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <small class="text-muted">From:</small>
+                                <strong>{{ message.sender.get_full_name|default:message.sender.username }}</strong>
+                                <span class="badge bg-secondary">{{ message.sender.get_role_display }}</span>
+                            </div>
+                            <div class="col-md-6 text-md-end">
+                                <small class="text-muted">To:</small>
+                                <strong>{{ message.receiver.get_full_name|default:message.receiver.username }}</strong>
+                                <span class="badge bg-secondary">{{ message.receiver.get_role_display }}</span>
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-md-6">
+                                <small class="text-muted">Date:</small>
+                                <strong>{{ message.created_at|date:"F d, Y H:i" }}</strong>
+                            </div>
+                            <div class="col-md-6 text-md-end">
+                                {% if message.is_read %}
+                                <span class="text-success"><i class="bi bi-check-circle"></i> Read on {{ message.read_at|date:"F d, Y H:i" }}</span>
+                                {% else %}
+                                <span class="text-warning"><i class="bi bi-clock"></i> Unread</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% if message.cargo or message.transport %}
+                        <div class="mt-2">
+                            <small class="text-muted">Related listing:</small>
+                            {% if message.cargo %}
+                            <a href="{% url 'load_detail' message.cargo.id %}" class="text-decoration-none">
+                                <i class="bi bi-box-seam"></i> {{ message.cargo.title }}
+                            </a>
+                            {% elif message.transport %}
+                            <a href="{% url 'truck_detail' message.transport.id %}" class="text-decoration-none">
+                                <i class="bi bi-truck"></i> {{ message.transport.title }}
+                            </a>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Message Content -->
+                    <div class="mb-4 p-3 bg-light rounded">
+                        {{ message.content|linebreaks }}
+                    </div>
+                    
+                    <!-- Reply Form -->
+                    <div class="mt-4">
+                        <h5><i class="bi bi-reply"></i> Reply</h5>
+                        
+                        <!-- Display form errors -->
+                        {% if form.errors %}
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                            Please correct the errors below:
+                            <ul class="mb-0 mt-2">
+                                {% for field, errors in form.errors.items %}
+                                    {% for error in errors %}
+                                        <li>{{ field|title }}: {{ error }}</li>
+                                    {% endfor %}
+                                {% endfor %}
+                            </ul>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                        {% endif %}
+                        
+                        <form method="post">
+                            {% csrf_token %}
+                            
+                            <!-- Subject field (hidden but required) -->
+                            <div class="mb-3">
+                                <label for="{{ form.subject.id_for_label }}" class="form-label">Subject *</label>
+                                {{ form.subject }}
+                                <div class="form-text">You can change the subject if needed</div>
+                                {% if form.subject.errors %}
+                                    <div class="text-danger">{{ form.subject.errors }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <!-- Content field -->
+                            <div class="mb-3">
+                                <label for="{{ form.content.id_for_label }}" class="form-label">Message *</label>
+                                {{ form.content }}
+                                {% if form.content.errors %}
+                                    <div class="text-danger">{{ form.content.errors }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="d-flex gap-2 justify-content-end">
+                                <a href="{% url 'message_inbox' %}" class="btn btn-secondary">
+                                    <i class="bi bi-arrow-left"></i> Back to Inbox
+                                </a>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-send"></i> Send Reply
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

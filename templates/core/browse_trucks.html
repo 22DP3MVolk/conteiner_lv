@@ -1,0 +1,252 @@
+{% extends 'base/base.html' %}
+
+{% block title %}{{ title }} | FreightMatch{% endblock %}
+
+{% block extra_css %}
+<style>
+    .truck-card {
+        transition: transform 0.2s, box-shadow 0.2s;
+        border: none;
+        border-radius: 12px;
+        overflow: hidden;
+    }
+    
+    .truck-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+    }
+    
+    .card-header {
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+        color: white;
+        padding: 1rem;
+    }
+    
+    .badge-transport-type {
+        background: var(--accent-color);
+        color: white;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+    }
+    
+    .feature-icons i {
+        font-size: 1.2rem;
+        margin-right: 5px;
+        color: var(--accent-color);
+    }
+    
+    .filter-sidebar {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        position: sticky;
+        top: 100px;
+    }
+    
+    .filter-title {
+        color: var(--primary-color);
+        font-weight: 600;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid var(--accent-color);
+    }
+    
+    .price-display {
+        font-size: 1.25rem;
+        font-weight: bold;
+        color: var(--primary-color);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <!-- Filters Sidebar -->
+        <div class="col-lg-3">
+            <div class="filter-sidebar">
+                <h5 class="filter-title">
+                    <i class="bi bi-funnel"></i> Filter Transport
+                </h5>
+                
+                <form method="get" action="{% url 'browse_trucks' %}">
+                    <!-- City From -->
+                    <div class="mb-3">
+                        <label class="form-label">From City</label>
+                        <input type="text" name="city_from" class="form-control" 
+                               placeholder="City name" value="{{ request.GET.city_from|default:'' }}">
+                    </div>
+                    
+                    <!-- Transport Type -->
+                    <div class="mb-3">
+                        <label class="form-label">Vehicle Type</label>
+                        <select name="transport_type" class="form-select">
+                            <option value="">All Types</option>
+                            {% for type in transport_types %}
+                            <option value="{{ type.code }}" {% if request.GET.transport_type == type.code %}selected{% endif %}>
+                                {{ type.name }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <!-- Capacity Range -->
+                    <div class="mb-3">
+                        <label class="form-label">Capacity Range (tons)</label>
+                        <div class="row">
+                            <div class="col-6">
+                                <input type="number" name="min_capacity" class="form-control" 
+                                       placeholder="Min" value="{{ request.GET.min_capacity|default:'' }}" step="0.1">
+                            </div>
+                            <div class="col-6">
+                                <input type="number" name="max_capacity" class="form-control" 
+                                       placeholder="Max" value="{{ request.GET.max_capacity|default:'' }}" step="0.1">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Features -->
+                    <div class="mb-3">
+                        <label class="form-label">Features</label>
+                        <div class="form-check">
+                            <input type="checkbox" name="has_gps" class="form-check-input" id="has_gps" {% if request.GET.has_gps %}checked{% endif %}>
+                            <label class="form-check-label" for="has_gps">GPS Tracking</label>
+                        </div>
+                        <div class="form-check">
+                            <input type="checkbox" name="has_temperature" class="form-check-input" id="has_temperature" {% if request.GET.has_temperature %}checked{% endif %}>
+                            <label class="form-check-label" for="has_temperature">Temperature Control</label>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-search"></i> Apply Filters
+                    </button>
+                    
+                    {% if request.GET.city_from or request.GET.transport_type or request.GET.min_capacity %}
+                    <a href="{% url 'browse_trucks' %}" class="btn btn-outline-secondary w-100 mt-2">
+                        <i class="bi bi-x-circle"></i> Clear Filters
+                    </a>
+                    {% endif %}
+                </form>
+            </div>
+        </div>
+        
+        <!-- Trucks List -->
+        <div class="col-lg-9">
+            <!-- Results Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="fw-bold" style="color: var(--primary-color);">
+                    <i class="bi bi-truck"></i> Available Transport
+                </h2>
+                <span class="badge bg-secondary">{{ page_obj.paginator.count }} vehicles found</span>
+            </div>
+            
+            <!-- Trucks Grid -->
+            {% if transports %}
+            <div class="row">
+                {% for transport in transports %}
+                <div class="col-md-6 mb-4">
+                    <div class="card truck-card h-100">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">
+                                <i class="bi bi-truck"></i> {{ transport.title }}
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text text-muted small">{{ transport.description|truncatewords:20 }}</p>
+                            
+                            <div class="mb-2">
+                                <i class="bi bi-building"></i> <strong>Carrier:</strong> {{ transport.carrier.company_name|default:transport.carrier.username }}
+                            </div>
+                            <div class="mb-2">
+                                <i class="bi bi-geo-alt"></i> <strong>Location:</strong> {{ transport.available_city_from }}
+                                {% if transport.available_city_to %}
+                                    → {{ transport.available_city_to }}
+                                {% endif %}
+                            </div>
+                            <div class="mb-2">
+                                <i class="bi bi-calendar"></i> <strong>Available:</strong> {{ transport.available_from_date|date:"M d, Y" }}
+                            </div>
+                            <div class="mb-2">
+                                <i class="bi bi-box"></i> <strong>Capacity:</strong> {{ transport.capacity_weight }} tons
+                                {% if transport.capacity_volume %} | {{ transport.capacity_volume }} m³{% endif %}
+                            </div>
+                            
+                            <div class="feature-icons mb-2">
+                                {% if transport.has_gps %}<i class="bi bi-satellite" title="GPS"></i>{% endif %}
+                                {% if transport.has_driver %}<i class="bi bi-person" title="Driver included"></i>{% endif %}
+                                {% if transport.has_temperature_control %}<i class="bi bi-thermometer-half" title="Temperature control"></i>{% endif %}
+                                {% if transport.insurance_included %}<i class="bi bi-shield-check" title="Insurance"></i>{% endif %}
+                            </div>
+                            
+                            <div class="mt-2">
+                                <span class="badge-transport-type">{{ transport.transport_type.name }}</span>
+                                {% if transport.price_per_km %}
+                                <span class="price-display float-end">${{ transport.price_per_km|floatformat:2 }}/km</span>
+                                {% elif transport.fixed_price %}
+                                <span class="price-display float-end">${{ transport.fixed_price|floatformat:2 }}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <a href="{% url 'truck_detail' transport.id %}" class="btn btn-outline-primary w-100">
+                                <i class="bi bi-eye"></i> View Details
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            
+            <!-- Pagination -->
+            {% if page_obj.has_other_pages %}
+            <nav aria-label="Page navigation" class="mt-4">
+                <ul class="pagination justify-content-center">
+                    {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                            <i class="bi bi-chevron-left"></i> Previous
+                        </a>
+                    </li>
+                    {% endif %}
+                    
+                    {% for num in page_obj.paginator.page_range %}
+                        {% if page_obj.number == num %}
+                        <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ num }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                                {{ num }}
+                            </a>
+                        </li>
+                        {% endif %}
+                    {% endfor %}
+                    
+                    {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                            Next <i class="bi bi-chevron-right"></i>
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
+            
+            {% else %}
+            <!-- No Results -->
+            <div class="text-center py-5">
+                <i class="bi bi-truck" style="font-size: 4rem; color: #dee2e6;"></i>
+                <h3 class="mt-3">No transport found</h3>
+                <p class="text-muted">Try adjusting your filters or check back later for new listings.</p>
+                <a href="{% url 'browse_trucks' %}" class="btn btn-primary">
+                    <i class="bi bi-arrow-repeat"></i> Clear Filters
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

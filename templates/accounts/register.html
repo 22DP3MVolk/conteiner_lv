@@ -1,0 +1,472 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up | FreightMatch</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-color: #0b3b5c;
+            --secondary-color: #1e5f7a;
+            --accent-color: #ff9f1c;
+            --light-bg: #f4f7fc;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f4f7fc 0%, #e9eef5 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        .register-container {
+            max-width: 650px;
+            width: 100%;
+            margin: 20px auto;
+        }
+        
+        .register-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(11, 59, 92, 0.15);
+            overflow: hidden;
+            border: none;
+        }
+        
+        .register-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            padding: 2rem;
+            text-align: center;
+            color: white;
+            border-bottom: 3px solid var(--accent-color);
+        }
+        
+        .register-header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 0;
+            letter-spacing: 1px;
+        }
+        
+        .register-header h1 i {
+            margin-right: 10px;
+        }
+        
+        .register-header p {
+            margin: 0.5rem 0 0;
+            opacity: 0.9;
+            font-size: 0.9rem;
+        }
+        
+        .register-body {
+            padding: 2.5rem 2rem;
+        }
+        
+        .logo {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .logo i {
+            font-size: 3rem;
+            color: var(--accent-color);
+        }
+        
+        .form-control, .form-select {
+            border: 1px solid #dee2e6;
+            border-radius: 10px;
+            padding: 0.75rem 1rem;
+            height: auto;
+            font-size: 1rem;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(255, 159, 28, 0.25);
+        }
+        
+        .form-label {
+            font-weight: 500;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .form-label i {
+            margin-right: 5px;
+        }
+        
+        .form-label .required {
+            color: #dc3545;
+            font-size: 0.9rem;
+        }
+        
+        .btn-register {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            border: none;
+            color: white;
+            font-weight: 600;
+            font-size: 1rem;
+            padding: 0.875rem;
+            border-radius: 10px;
+            width: 100%;
+            transition: all 0.3s;
+            margin-top: 1rem;
+        }
+        
+        .btn-register:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(11, 59, 92, 0.3);
+        }
+        
+        .errorlist {
+            list-style: none;
+            padding: 0;
+            margin: 0.5rem 0 0;
+            color: #dc3545;
+            font-size: 0.85rem;
+        }
+        
+        .help-text {
+            font-size: 0.8rem;
+            color: #6c757d;
+            margin-top: 0.25rem;
+        }
+        
+        .register-footer {
+            background: #f8f9fa;
+            padding: 1.5rem 2rem;
+            text-align: center;
+            border-top: 1px solid #dee2e6;
+        }
+        
+        .register-footer a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+        
+        .register-footer a:hover {
+            color: var(--accent-color);
+        }
+        
+        .login-link {
+            margin-top: 1rem;
+            text-align: center;
+        }
+        
+        .login-link a {
+            color: var(--accent-color);
+            font-weight: 600;
+            text-decoration: none;
+        }
+        
+        .login-link a:hover {
+            color: var(--primary-color);
+        }
+        
+        .password-requirements {
+            font-size: 0.75rem;
+            color: #6c757d;
+            margin-top: 0.5rem;
+        }
+        
+        .password-requirements i {
+            font-size: 0.7rem;
+        }
+        
+        .role-option {
+            margin-bottom: 0.75rem;
+        }
+        
+        .role-option input {
+            margin-right: 10px;
+        }
+        
+        .role-option label {
+            font-weight: 500;
+            color: var(--primary-color);
+        }
+        
+        .role-description {
+            font-size: 0.8rem;
+            color: #6c757d;
+            margin-left: 1.8rem;
+            margin-bottom: 0;
+        }
+        
+        .row {
+            margin-right: -8px;
+            margin-left: -8px;
+        }
+        
+        .col-md-6 {
+            padding-right: 8px;
+            padding-left: 8px;
+        }
+        
+        hr {
+            margin: 1.5rem 0;
+            border-color: #dee2e6;
+        }
+        
+        .info-message {
+            background: #e7f3ff;
+            border-left: 4px solid var(--accent-color);
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+        }
+        
+        .info-message i {
+            color: var(--accent-color);
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="register-container">
+        <div class="register-card">
+            <div class="register-header">
+                <h1>
+                    <i class="bi bi-truck"></i>
+                    FreightMatch
+                </h1>
+                <p>Join the Logistics Marketplace</p>
+            </div>
+            
+            <div class="register-body">
+                <div class="logo">
+                    <i class="bi bi-person-plus"></i>
+                </div>
+                
+                <div class="info-message">
+                    <i class="bi bi-info-circle-fill"></i>
+                    <strong>Account Approval Required</strong><br>
+                    After registration, your account will need to be approved by an administrator. 
+                    You will be notified once your account is activated.
+                </div>
+                
+                {% if form.errors %}
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    Please correct the errors below.
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+                {% endif %}
+                
+                <form method="post" action="{% url 'accounts:register' %}">
+                    {% csrf_token %}
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.first_name.id_for_label }}" class="form-label">
+                                <i class="bi bi-person"></i>First Name <span class="required">*</span>
+                            </label>
+                            <input type="text" name="{{ form.first_name.name }}" 
+                                   id="{{ form.first_name.id_for_label }}" 
+                                   class="form-control" 
+                                   placeholder="Enter first name"
+                                   value="{{ form.first_name.value|default:'' }}"
+                                   required>
+                            {{ form.first_name.errors }}
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.last_name.id_for_label }}" class="form-label">
+                                <i class="bi bi-person"></i>Last Name <span class="required">*</span>
+                            </label>
+                            <input type="text" name="{{ form.last_name.name }}" 
+                                   id="{{ form.last_name.id_for_label }}" 
+                                   class="form-control" 
+                                   placeholder="Enter last name"
+                                   value="{{ form.last_name.value|default:'' }}"
+                                   required>
+                            {{ form.last_name.errors }}
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.username.id_for_label }}" class="form-label">
+                            <i class="bi bi-person-badge"></i>Username <span class="required">*</span>
+                        </label>
+                        <input type="text" name="{{ form.username.name }}" 
+                               id="{{ form.username.id_for_label }}" 
+                               class="form-control" 
+                               placeholder="Choose a username"
+                               value="{{ form.username.value|default:'' }}"
+                               required>
+                        <div class="help-text">Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.</div>
+                        {{ form.username.errors }}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.email.id_for_label }}" class="form-label">
+                            <i class="bi bi-envelope"></i>Email Address <span class="required">*</span>
+                        </label>
+                        <input type="email" name="{{ form.email.name }}" 
+                               id="{{ form.email.id_for_label }}" 
+                               class="form-control" 
+                               placeholder="Enter your email"
+                               value="{{ form.email.value|default:'' }}"
+                               required>
+                        {{ form.email.errors }}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.company_name.id_for_label }}" class="form-label">
+                            <i class="bi bi-building"></i>Company Name <span class="required">*</span>
+                        </label>
+                        <input type="text" name="{{ form.company_name.name }}" 
+                               id="{{ form.company_name.id_for_label }}" 
+                               class="form-control" 
+                               placeholder="Enter your company name"
+                               value="{{ form.company_name.value|default:'' }}"
+                               required>
+                        {{ form.company_name.errors }}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.position.id_for_label }}" class="form-label">
+                            <i class="bi bi-briefcase"></i>Position <span class="required">*</span>
+                        </label>
+                        <input type="text" name="{{ form.position.name }}" 
+                               id="{{ form.position.id_for_label }}" 
+                               class="form-control" 
+                               placeholder="Your position (e.g., Logistics Manager)"
+                               value="{{ form.position.value|default:'' }}"
+                               required>
+                        {{ form.position.errors }}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.phone.id_for_label }}" class="form-label">
+                            <i class="bi bi-telephone"></i>Phone Number <span class="required">*</span>
+                        </label>
+                        <input type="tel" name="{{ form.phone.name }}" 
+                               id="{{ form.phone.id_for_label }}" 
+                               class="form-control" 
+                               placeholder="Enter your phone number"
+                               value="{{ form.phone.value|default:'' }}"
+                               required>
+                        {{ form.phone.errors }}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.website.id_for_label }}" class="form-label">
+                            <i class="bi bi-globe"></i>Company Website
+                        </label>
+                        <input type="url" name="{{ form.website.name }}" 
+                               id="{{ form.website.id_for_label }}" 
+                               class="form-control" 
+                               placeholder="https://yourcompany.com"
+                               value="{{ form.website.value|default:'' }}">
+                        {{ form.website.errors }}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.address.id_for_label }}" class="form-label">
+                            <i class="bi bi-geo-alt"></i>Company Address
+                        </label>
+                        <textarea name="{{ form.address.name }}" 
+                                  id="{{ form.address.id_for_label }}" 
+                                  class="form-control" 
+                                  rows="3"
+                                  placeholder="Your company address">{{ form.address.value|default:'' }}</textarea>
+                        {{ form.address.errors }}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">
+                            <i class="bi bi-person-rolodex"></i>Account Type <span class="required">*</span>
+                        </label>
+                        <div class="role-options">
+                            {% for radio in form.role %}
+                            <div class="role-option">
+                                {{ radio.tag }}
+                                <label for="{{ radio.id_for_label }}" class="form-label">
+                                    {{ radio.choice_label }}
+                                </label>
+                                {% if radio.data.value == 'shipper' %}
+                                <p class="role-description">I want to post loads and find carriers for my cargo</p>
+                                {% elif radio.data.value == 'carrier' %}
+                                <p class="role-description">I have transport and want to find loads to carry</p>
+                                {% endif %}
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {{ form.role.errors }}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.password1.id_for_label }}" class="form-label">
+                            <i class="bi bi-lock"></i>Password <span class="required">*</span>
+                        </label>
+                        <input type="password" name="{{ form.password1.name }}" 
+                               id="{{ form.password1.id_for_label }}" 
+                               class="form-control" 
+                               placeholder="Create a password"
+                               required>
+                        <div class="password-requirements">
+                            <i class="bi bi-info-circle"></i>
+                            Your password must contain at least 8 characters and can't be entirely numeric.
+                        </div>
+                        {{ form.password1.errors }}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.password2.id_for_label }}" class="form-label">
+                            <i class="bi bi-lock-fill"></i>Confirm Password <span class="required">*</span>
+                        </label>
+                        <input type="password" name="{{ form.password2.name }}" 
+                               id="{{ form.password2.id_for_label }}" 
+                               class="form-control" 
+                               placeholder="Confirm your password"
+                               required>
+                        {{ form.password2.errors }}
+                    </div>
+                    
+                    <button type="submit" class="btn-register">
+                        <i class="bi bi-person-plus me-2"></i>Register
+                    </button>
+                </form>
+                
+                <hr>
+                
+                <div class="login-link">
+                    <p class="mb-0">
+                        Already have an account? 
+                        <a href="{% url 'accounts:login' %}">
+                            <i class="bi bi-box-arrow-in-right"></i> Sign In
+                        </a>
+                    </p>
+                </div>
+            </div>
+            
+            <div class="register-footer">
+                <p class="mb-0 text-muted small">
+                    <i class="bi bi-c-circle me-1"></i>2026 FreightMatch - All rights reserved
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

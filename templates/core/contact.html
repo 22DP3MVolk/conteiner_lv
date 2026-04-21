@@ -1,0 +1,322 @@
+{% extends 'base/base.html' %}
+
+{% block title %}{{ title }} | FreightMatch{% endblock %}
+
+{% block extra_css %}
+<style>
+    .hero-section {
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+        color: white;
+        padding: 4rem 0;
+        border-radius: 0 0 30px 30px;
+        margin-bottom: 3rem;
+    }
+    
+    .contact-card {
+        background: white;
+        border-radius: 20px;
+        padding: 2rem;
+        height: 100%;
+        transition: transform 0.3s, box-shadow 0.3s;
+        border: none;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        text-align: center;
+    }
+    
+    .contact-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 40px rgba(0,0,0,0.12);
+    }
+    
+    .contact-icon {
+        font-size: 3rem;
+        color: var(--accent-color);
+        margin-bottom: 1rem;
+    }
+    
+    .contact-info {
+        font-size: 1.1rem;
+        color: #495057;
+        margin-top: 1rem;
+    }
+    
+    .contact-info a {
+        color: var(--primary-color);
+        text-decoration: none;
+        transition: color 0.3s;
+    }
+    
+    .contact-info a:hover {
+        color: var(--accent-color);
+    }
+    
+    .contact-form {
+        background: white;
+        border-radius: 20px;
+        padding: 2rem;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    }
+    
+    .form-control, .form-select {
+        border: 1px solid #dee2e6;
+        border-radius: 10px;
+        padding: 0.75rem 1rem;
+        height: auto;
+    }
+    
+    .form-control:focus, .form-select:focus {
+        border-color: var(--accent-color);
+        box-shadow: 0 0 0 3px rgba(255, 159, 28, 0.25);
+    }
+    
+    .btn-submit {
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+        border: none;
+        color: white;
+        font-weight: 600;
+        padding: 12px 30px;
+        border-radius: 10px;
+        width: 100%;
+        transition: all 0.3s;
+    }
+    
+    .btn-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(11, 59, 92, 0.3);
+    }
+    
+    .map-placeholder {
+        background: #e9ecef;
+        border-radius: 15px;
+        height: 300px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 2rem;
+    }
+    
+    .office-card {
+        background: white;
+        border-radius: 15px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    
+    .office-card h5 {
+        color: var(--primary-color);
+        margin-bottom: 1rem;
+    }
+    
+    .office-card i {
+        color: var(--accent-color);
+        width: 25px;
+        margin-right: 10px;
+    }
+    
+    .social-links a {
+        display: inline-block;
+        width: 45px;
+        height: 45px;
+        background: var(--primary-color);
+        color: white;
+        border-radius: 50%;
+        text-align: center;
+        line-height: 45px;
+        margin: 0 8px;
+        transition: all 0.3s;
+    }
+    
+    .social-links a:hover {
+        background: var(--accent-color);
+        transform: translateY(-3px);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="hero-section">
+    <div class="container text-center">
+        <h1 class="display-4 fw-bold mb-3">Contact Us</h1>
+        <p class="lead mb-0">We're here to help and answer any questions you might have</p>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row mb-5">
+        <!-- Contact Cards -->
+        <div class="col-md-4 mb-4">
+            <div class="contact-card">
+                <i class="bi bi-envelope contact-icon"></i>
+                <h4>Email Us</h4>
+                <p class="text-muted">For general inquiries and support</p>
+                <div class="contact-info">
+                    <a href="mailto:support@freightmatch.com">
+                        <i class="bi bi-envelope-fill"></i> support@freightmatch.com
+                    </a>
+                </div>
+                <div class="contact-info mt-2">
+                    <a href="mailto:sales@freightmatch.com">
+                        <i class="bi bi-briefcase-fill"></i> sales@freightmatch.com
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="contact-card">
+                <i class="bi bi-telephone contact-icon"></i>
+                <h4>Call Us</h4>
+                <p class="text-muted">Mon-Fri: 9:00 - 22:00</p>
+                <div class="contact-info">
+                    <a href="tel:+1234567890">
+                        <i class="bi bi-telephone-fill"></i> +1 (371) 123-45-67
+                    </a>
+                </div>
+                <div class="contact-info mt-2">
+                    <a href="tel:+1987654321">
+                        <i class="bi bi-telephone-fill"></i> +1 (371) 765-43-21
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="contact-card">
+                <i class="bi bi-chat-dots contact-icon"></i>
+                <h4>Live Chat</h4>
+                <p class="text-muted">Available 24/7 for urgent matters</p>
+                <div class="contact-info">
+                    <a href="#">
+                        <i class="bi bi-chat-dots-fill"></i> Start Live Chat
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Contact Form and Offices -->
+    <div class="row">
+        <div class="col-lg-7 mb-4">
+            <div class="contact-form">
+                <h3 class="fw-bold mb-4" style="color: var(--primary-color);">
+                    <i class="bi bi-envelope-paper"></i> Send Us a Message
+                </h3>
+                
+                <form method="post" action="#">
+                    {% csrf_token %}
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">First Name *</label>
+                            <input type="text" class="form-control" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Last Name *</label>
+                            <input type="text" class="form-control" required>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Email Address *</label>
+                        <input type="email" class="form-control" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Subject *</label>
+                        <select class="form-select" required>
+                            <option value="">Select a subject</option>
+                            <option>General Inquiry</option>
+                            <option>Technical Support</option>
+                            <option>Partnership Opportunity</option>
+                            <option>Account Issue</option>
+                            <option>Other</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Message *</label>
+                        <textarea class="form-control" rows="5" required></textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn-submit">
+                        <i class="bi bi-send"></i> Send Message
+                    </button>
+                </form>
+            </div>
+        </div>
+        
+        <div class="col-lg-5 mb-4">
+            <!-- Office Locations -->
+            <div class="office-card">
+                <h5><i class="bi bi-building"></i> Rīgas galvenais ofis</h5>
+                <p class="mb-1">
+                    <i class="bi bi-geo-alt"></i> Adrese: Katlakalna iela 11 <br>
+                    Rīga<br>
+                    Latvija
+                </p>
+                <p class="mb-0">
+                    <i class="bi bi-clock"></i> Mon-Fri: 9:00 - 22:00
+                </p>
+            </div>
+            
+            <div class="office-card">
+                <h5><i class="bi bi-building"></i> Ofis 2</h5>
+                <p class="mb-1">
+                    <i class="bi bi-geo-alt"></i> Adrese: Ilūkstes iela 24a <br>
+                    Rīga<br>
+                    Latvija
+                </p>
+                <p class="mb-0">
+                    <i class="bi bi-clock"></i> Mon-Fri: 9:00 - 22:00
+                </p>
+            </div>
+            
+            <div class="office-card">
+                <h5><i class="bi bi-building"></i> Ofis 3</h5>
+                <p class="mb-1">
+                    <i class="bi bi-geo-alt"></i> Adrese: Lubānas iela 117a<br>
+                    Rīga<br>
+                    Latvija
+                </p>
+                <p class="mb-0">
+                    <i class="bi bi-clock"></i> Mon-Fri: 9:00 - 22:00
+                </p>
+            </div>
+            
+            <!-- Social Media -->
+            <div class="office-card text-center">
+                <h5><i class="bi bi-share"></i> Follow Us</h5>
+                <div class="social-links">
+                    <a href="#"><i class="bi bi-facebook"></i></a>
+                    <a href="#"><i class="bi bi-twitter-x"></i></a>
+                    <a href="#"><i class="bi bi-linkedin"></i></a>
+                    <a href="#"><i class="bi bi-instagram"></i></a>
+                    <a href="#"><i class="bi bi-youtube"></i></a>
+                </div>
+                <p class="text-muted mt-3 mb-0">Stay updated with our latest news and offers</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Map Placeholder (optional) -->
+    <div class="map-placeholder">
+        <div class="text-center">
+            <i class="bi bi-map" style="font-size: 3rem; color: var(--accent-color);"></i>
+            <p class="mt-2 text-muted">Interactive map will be displayed here</p>
+        </div>
+    </div>
+    
+    <!-- Support Hours -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="alert alert-info text-center">
+                <i class="bi bi-headset"></i>
+                <strong>24/7 Emergency Support:</strong> For urgent logistics issues, call our emergency hotline at 
+                <strong>+1 (800) 123-4567</strong>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

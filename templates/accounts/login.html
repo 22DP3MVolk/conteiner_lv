@@ -1,0 +1,326 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | FreightMatch</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-color: #0b3b5c;
+            --secondary-color: #1e5f7a;
+            --accent-color: #ff9f1c;
+            --light-bg: #f4f7fc;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f4f7fc 0%, #e9eef5 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        .login-container {
+            max-width: 450px;
+            width: 100%;
+        }
+        
+        .login-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(11, 59, 92, 0.15);
+            overflow: hidden;
+            border: none;
+        }
+        
+        .login-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            padding: 2rem;
+            text-align: center;
+            color: white;
+            border-bottom: 3px solid var(--accent-color);
+        }
+        
+        .login-header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 0;
+            letter-spacing: 1px;
+        }
+        
+        .login-header h1 i {
+            margin-right: 10px;
+        }
+        
+        .login-header p {
+            margin: 0.5rem 0 0;
+            opacity: 0.9;
+            font-size: 0.9rem;
+        }
+        
+        .login-body {
+            padding: 2.5rem 2rem;
+        }
+        
+        .logo {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .logo i {
+            font-size: 3rem;
+            color: var(--accent-color);
+        }
+        
+        .form-floating {
+            margin-bottom: 1.2rem;
+        }
+        
+        .form-control {
+            border: 1px solid #dee2e6;
+            border-radius: 10px;
+            padding: 0.75rem 1rem;
+            height: auto;
+            font-size: 1rem;
+        }
+        
+        .form-control:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(255, 159, 28, 0.25);
+        }
+        
+        .form-label {
+            font-weight: 500;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .btn-login {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            border: none;
+            color: white;
+            font-weight: 600;
+            font-size: 1rem;
+            padding: 0.875rem;
+            border-radius: 10px;
+            width: 100%;
+            transition: all 0.3s;
+            margin-top: 1.5rem;
+        }
+        
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(11, 59, 92, 0.3);
+        }
+        
+        .password-toggle {
+            position: relative;
+        }
+        
+        .toggle-password {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #6c757d;
+            z-index: 10;
+            background: white;
+            padding: 0 5px;
+        }
+        
+        .errorlist {
+            list-style: none;
+            padding: 0;
+            margin: 0.5rem 0 0;
+            color: #dc3545;
+            font-size: 0.85rem;
+        }
+        
+        .login-footer {
+            background: #f8f9fa;
+            padding: 1.5rem 2rem;
+            text-align: center;
+            border-top: 1px solid #dee2e6;
+        }
+        
+        .login-footer a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+        
+        .login-footer a:hover {
+            color: var(--accent-color);
+        }
+        
+        .demo-credentials {
+            background: #e9ecef;
+            border-radius: 8px;
+            padding: 0.75rem;
+            margin: 1.5rem 0 0;
+            font-size: 0.85rem;
+            color: #495057;
+        }
+        
+        .demo-credentials code {
+            background: white;
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+        
+        .register-link {
+            margin-top: 1rem;
+            text-align: center;
+        }
+        
+        .register-link a {
+            color: var(--accent-color);
+            font-weight: 600;
+        }
+        
+        .register-link a:hover {
+            color: var(--primary-color);
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <h1>
+                    <i class="bi bi-truck"></i>
+                    FreightMatch
+                </h1>
+                <p>Logistics Marketplace Platform</p>
+            </div>
+            
+            <div class="login-body">
+                <div class="logo">
+                    <i class="bi bi-box-arrow-in-right"></i>
+                </div>
+                
+                {% if form.errors %}
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    Invalid username or password. Please try again.
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+                {% endif %}
+
+                {% if request.GET.next == 'inactive' %}
+                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                    <i class="bi bi-clock-history me-2"></i>
+                    Your account is pending approval. Please wait for administrator verification.
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+                {% endif %}
+                
+                <form method="post" action="{% url 'accounts:login' %}">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.username.id_for_label }}" class="form-label">
+                            <i class="bi bi-person me-1"></i>Username or Email
+                        </label>
+                        <input type="text" name="{{ form.username.name }}" 
+                               id="{{ form.username.id_for_label }}" 
+                               class="form-control" 
+                               placeholder="Enter your username"
+                               value="{{ form.username.value|default:'' }}"
+                               required autofocus>
+                        {{ form.username.errors }}
+                    </div>
+                    
+                    <div class="mb-3 password-toggle">
+                        <label for="{{ form.password.id_for_label }}" class="form-label">
+                            <i class="bi bi-lock me-1"></i>Password
+                        </label>
+                        <input type="password" name="{{ form.password.name }}" 
+                               id="{{ form.password.id_for_label }}" 
+                               class="form-control" 
+                               placeholder="Enter your password"
+                               required>
+                        <span class="toggle-password" onclick="togglePassword()">
+                            <i class="bi bi-eye" id="toggleIcon"></i>
+                        </span>
+                        {{ form.password.errors }}
+                    </div>
+                    
+                    <input type="hidden" name="next" value="{{ next }}">
+                    
+                    <button type="submit" class="btn-login">
+                        <i class="bi bi-box-arrow-in-right me-2"></i>Sign In
+                    </button>
+                </form>
+                
+                <div class="register-link">
+                    <p class="mb-0">
+                        Don't have an account? 
+                        <a href="{% url 'accounts:register' %}"><i class="bi bi-person-plus"></i> Sign Up</a>
+                    </p>
+                </div>
+                
+                <!-- Demo credentials for development -->
+                {% if debug %}
+                <div class="demo-credentials">
+                    <small>
+                        <i class="bi bi-info-circle me-1"></i>
+                        <strong>Demo Access:</strong><br>
+                        Shipper: <code>shipper@demo.com</code> / <code>shipper123</code><br>
+                        Carrier: <code>carrier@demo.com</code> / <code>carrier123</code><br>
+                        Admin: <code>admin@demo.com</code> / <code>admin123</code>
+                    </small>
+                </div>
+                {% endif %}
+            </div>
+            
+            <div class="login-footer">
+                <p class="mb-0">
+                    <a href="#"><i class="bi bi-question-circle me-1"></i>Forgot password?</a>
+                </p>
+                <p class="mb-0 mt-2 text-muted small">
+                    <i class="bi bi-c-circle me-1"></i>2026 FreightMatch - All rights reserved
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function togglePassword() {
+            const passwordInput = document.getElementById('{{ form.password.id_for_label }}');
+            const toggleIcon = document.getElementById('toggleIcon');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.classList.remove('bi-eye');
+                toggleIcon.classList.add('bi-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.classList.remove('bi-eye-slash');
+                toggleIcon.classList.add('bi-eye');
+            }
+        }
+    </script>
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

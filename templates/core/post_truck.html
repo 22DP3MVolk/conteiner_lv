@@ -1,0 +1,365 @@
+{% extends 'base/base.html' %}
+
+{% block title %}{{ title }} | FreightMatch{% endblock %}
+
+{% block extra_css %}
+<style>
+    .form-section {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    
+    .form-section h3 {
+        color: var(--primary-color);
+        font-size: 1.3rem;
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid var(--accent-color);
+    }
+    
+    .required-field::after {
+        content: '*';
+        color: #dc3545;
+        margin-left: 4px;
+    }
+    
+    .help-text {
+        font-size: 0.8rem;
+        color: #6c757d;
+        margin-top: 0.25rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <!-- Page Header -->
+            <div class="mb-4">
+                <h1 class="display-5 fw-bold" style="color: var(--primary-color);">
+                    <i class="bi bi-truck"></i> {{ title }}
+                </h1>
+                <p class="text-muted">Fill in the details below to list your available transport</p>
+            </div>
+            
+            <!-- Form -->
+            <form method="post">
+                {% csrf_token %}
+                
+                <!-- Display form errors -->
+                {% if form.non_field_errors %}
+                <div class="alert alert-danger">
+                    {% for error in form.non_field_errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+                {% endif %}
+                
+                {% if form.errors %}
+                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    <strong>Please correct the following errors:</strong>
+                    <ul class="mb-0 mt-2">
+                        {% for field, errors in form.errors.items %}
+                            {% for error in errors %}
+                                <li>{{ field|title }}: {{ error }}</li>
+                            {% endfor %}
+                        {% endfor %}
+                    </ul>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+                {% endif %}
+                
+                <!-- Basic Information Section -->
+                <div class="form-section">
+                    <h3><i class="bi bi-info-circle"></i> Basic Information</h3>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.title.id_for_label }}" class="form-label required-field">
+                            Vehicle Title
+                        </label>
+                        {{ form.title }}
+                        <div class="help-text">Brief description of your vehicle (e.g., Volvo FH16 2023)</div>
+                        {% if form.title.errors %}
+                            <div class="alert alert-danger mt-1">{{ form.title.errors }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.description.id_for_label }}" class="form-label">Description</label>
+                        {{ form.description }}
+                        <div class="help-text">Additional information about your vehicle, special features, etc.</div>
+                        {% if form.description.errors %}
+                            <div class="alert alert-danger mt-1">{{ form.description.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <!-- Location & Availability Section -->
+                <div class="form-section">
+                    <h3><i class="bi bi-geo-alt"></i> Location & Availability</h3>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.available_city_from.id_for_label }}" class="form-label required-field">
+                                Available From City
+                            </label>
+                            {{ form.available_city_from }}
+                            {% if form.available_city_from.errors %}
+                                <div class="alert alert-danger mt-1">{{ form.available_city_from.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.available_city_to.id_for_label }}" class="form-label">
+                                Available To City (Optional)
+                            </label>
+                            {{ form.available_city_to }}
+                            <div class="help-text">If you have a route, specify destination city</div>
+                            {% if form.available_city_to.errors %}
+                                <div class="alert alert-danger mt-1">{{ form.available_city_to.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.current_location.id_for_label }}" class="form-label">
+                            Current Location (Optional)
+                        </label>
+                        {{ form.current_location }}
+                        <div class="help-text">Where is your vehicle right now?</div>
+                        {% if form.current_location.errors %}
+                            <div class="alert alert-danger mt-1">{{ form.current_location.errors }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.available_from_date.id_for_label }}" class="form-label required-field">
+                                Available From Date
+                            </label>
+                            {{ form.available_from_date }}
+                            {% if form.available_from_date.errors %}
+                                <div class="alert alert-danger mt-1">{{ form.available_from_date.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.available_from_time.id_for_label }}" class="form-label">
+                                Available From Time (Optional)
+                            </label>
+                            {{ form.available_from_time }}
+                            {% if form.available_from_time.errors %}
+                                <div class="alert alert-danger mt-1">{{ form.available_from_time.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.available_to_date.id_for_label }}" class="form-label">
+                                Available To Date (Optional)
+                            </label>
+                            {{ form.available_to_date }}
+                            {% if form.available_to_date.errors %}
+                                <div class="alert alert-danger mt-1">{{ form.available_to_date.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.available_to_time.id_for_label }}" class="form-label">
+                                Available To Time (Optional)
+                            </label>
+                            {{ form.available_to_time }}
+                            {% if form.available_to_time.errors %}
+                                <div class="alert alert-danger mt-1">{{ form.available_to_time.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Vehicle Specifications Section -->
+                <div class="form-section">
+                    <h3><i class="bi bi-truck"></i> Vehicle Specifications</h3>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.transport_type.id_for_label }}" class="form-label required-field">
+                                Vehicle Type
+                            </label>
+                            {{ form.transport_type }}
+                            {% if form.transport_type.errors %}
+                                <div class="alert alert-danger mt-1">{{ form.transport_type.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.capacity_weight.id_for_label }}" class="form-label required-field">
+                                Capacity (tons)
+                            </label>
+                            {{ form.capacity_weight }}
+                            {% if form.capacity_weight.errors %}
+                                <div class="alert alert-danger mt-1">{{ form.capacity_weight.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.capacity_volume.id_for_label }}" class="form-label">
+                                Capacity Volume (m³) - Optional
+                            </label>
+                            {{ form.capacity_volume }}
+                            {% if form.capacity_volume.errors %}
+                                <div class="alert alert-danger mt-1">{{ form.capacity_volume.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.truck_model.id_for_label }}" class="form-label">
+                                Truck Model (Optional)
+                            </label>
+                            {{ form.truck_model }}
+                            {% if form.truck_model.errors %}
+                                <div class="alert alert-danger mt-1">{{ form.truck_model.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.year.id_for_label }}" class="form-label">
+                                Year (Optional)
+                            </label>
+                            {{ form.year }}
+                            {% if form.year.errors %}
+                                <div class="alert alert-danger mt-1">{{ form.year.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.license_plate.id_for_label }}" class="form-label">
+                                License Plate (Optional)
+                            </label>
+                            {{ form.license_plate }}
+                            {% if form.license_plate.errors %}
+                                <div class="alert alert-danger mt-1">{{ form.license_plate.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Pricing Section -->
+                <div class="form-section">
+                    <h3><i class="bi bi-currency-dollar"></i> Pricing</h3>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.price_per_km.id_for_label }}" class="form-label">
+                                Price per km (USD)
+                            </label>
+                            {{ form.price_per_km }}
+                            <div class="help-text">Optional - e.g., 2.50</div>
+                            {% if form.price_per_km.errors %}
+                                <div class="alert alert-danger mt-1">{{ form.price_per_km.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.fixed_price.id_for_label }}" class="form-label">
+                                Fixed Price (USD)
+                            </label>
+                            {{ form.fixed_price }}
+                            <div class="help-text">Optional - e.g., 1500.00</div>
+                            {% if form.fixed_price.errors %}
+                                <div class="alert alert-danger mt-1">{{ form.fixed_price.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="form-check">
+                            {{ form.price_negotiable }}
+                            <label for="{{ form.price_negotiable.id_for_label }}" class="form-check-label">
+                                Price is negotiable
+                            </label>
+                        </div>
+                        {% if form.price_negotiable.errors %}
+                            <div class="alert alert-danger mt-1">{{ form.price_negotiable.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <!-- Features Section -->
+                <div class="form-section">
+                    <h3><i class="bi bi-star"></i> Features & Equipment</h3>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-check mb-2">
+                                {{ form.has_gps }}
+                                <label for="{{ form.has_gps.id_for_label }}" class="form-check-label">
+                                    GPS Tracking Available
+                                </label>
+                            </div>
+                            
+                            <div class="form-check mb-2">
+                                {{ form.has_driver }}
+                                <label for="{{ form.has_driver.id_for_label }}" class="form-check-label">
+                                    Driver Included
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="form-check mb-2">
+                                {{ form.has_temperature_control }}
+                                <label for="{{ form.has_temperature_control.id_for_label }}" class="form-check-label">
+                                    Temperature Control
+                                </label>
+                            </div>
+                            
+                            <div class="form-check mb-2">
+                                {{ form.insurance_included }}
+                                <label for="{{ form.insurance_included.id_for_label }}" class="form-check-label">
+                                    Cargo Insurance Included
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Listing Duration Section -->
+                <div class="form-section">
+                    <h3><i class="bi bi-calendar"></i> Listing Duration</h3>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.expires_at.id_for_label }}" class="form-label">
+                            Expiration Date (Optional)
+                        </label>
+                        {{ form.expires_at }}
+                        <div class="help-text">Leave empty for no expiration date</div>
+                        {% if form.expires_at.errors %}
+                            <div class="alert alert-danger mt-1">{{ form.expires_at.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <!-- Form Actions -->
+                <div class="d-flex gap-3 justify-content-end">
+                    <a href="{% url 'my_trucks' %}" class="btn btn-outline-secondary btn-lg">
+                        <i class="bi bi-x-circle"></i> Cancel
+                    </a>
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <i class="bi bi-check-circle"></i> {% if transport %}Update Truck{% else %}Post Truck{% endif %}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

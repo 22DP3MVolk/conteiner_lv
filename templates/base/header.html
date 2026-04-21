@@ -1,0 +1,140 @@
+{% load static %}
+<nav class="navbar navbar-expand-lg navbar-custom">
+    <div class="container-fluid">
+        <!-- Logo -->
+        <a class="navbar-brand" href="/">
+            <i class="bi bi-truck me-2"></i>
+            <span>FreightMatch</span>
+            <small>Logistics Marketplace</small>
+        </a>
+        
+        <!-- Mobile Toggle -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain" 
+                aria-controls="navbarMain" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        
+        <!-- Main Navigation -->
+        <div class="collapse navbar-collapse" id="navbarMain">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <!-- Public Menu Items -->
+                <li class="nav-item">
+                    <a class="nav-link {% block market_active %}{% endblock %}" href="/">
+                        <i class="bi bi-shop"></i> Marketplace
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'how_it_works' %}">
+                        <i class="bi bi-info-circle"></i> How It Works
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'contact' %}">
+                        <i class="bi bi-envelope"></i> Contact
+                    </a>
+                </li>
+                
+                <!-- Role-based Menu Items -->
+                {% if user.is_authenticated %}
+                    {% if user.role == 'shipper' %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="shipperMenu" role="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-box-seam"></i> Shipper
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{% url 'my_loads' %}"><i class="bi bi-speedometer2"></i> Dashboard</a></li>
+                            <li><a class="dropdown-item" href="{% url 'post_load' %}"><i class="bi bi-plus-circle"></i> Post Load</a></li>
+                            <li><a class="dropdown-item" href="{% url 'my_loads' %}"><i class="bi bi-list-ul"></i> My Loads</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{% url 'browse_trucks' %}"><i class="bi bi-search"></i> Find Transport</a></li>
+                        </ul>
+                    </li>
+                    {% endif %}
+                    
+                    {% if user.role == 'carrier' %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="carrierMenu" role="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-truck"></i> Carrier
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{% url 'my_trucks' %}"><i class="bi bi-speedometer2"></i> Dashboard</a></li>
+                            <li><a class="dropdown-item" href="{% url 'post_truck' %}"><i class="bi bi-plus-circle"></i> Post Truck</a></li>
+                            <li><a class="dropdown-item" href="{% url 'my_trucks' %}"><i class="bi bi-list-ul"></i> My Trucks</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{% url 'browse_loads' %}"><i class="bi bi-search"></i> Find Loads</a></li>
+                        </ul>
+                    </li>
+                    {% endif %}
+                    
+                    {% if user.is_staff %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="adminMenu" role="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-shield-lock"></i> Admin
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{% url 'admin:index' %}" target="_blank">
+                                <i class="bi bi-people"></i> Django Admin</a>
+                            </li>
+                            {% comment %} <li><a class="dropdown-item" href="#"><i class="bi bi-eye"></i> Listings Moderation</a></li>
+                            <li><a class="dropdown-item" href="#"><i class="bi bi-graph-up"></i> Analytics</a></li> {% endcomment %}
+                        </ul>
+                    </li>
+                    {% endif %}
+                    
+                    <!-- Messages -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'message_inbox' %}">
+                            <i class="bi bi-chat-dots"></i> Messages
+                            {% if unread_count > 0 %}
+                            <span class="badge bg-danger rounded-pill ms-1" style="font-size: 0.7rem;">{{ unread_count }}</span>
+                            {% endif %}
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+            
+            <!-- User Section -->
+            <div class="d-flex">
+                {% if user.is_authenticated %}
+                <div class="user-menu">
+                    <div class="user-avatar">
+                        {{ user.first_name|first|default:user.username|first|upper }}
+                    </div>
+                    <div class="user-info">
+                        <div class="user-name">{{ user.get_full_name|default:user.username }}</div>
+                        <div class="user-role">
+                            {% if user.role == 'shipper' %}
+                                <i class="bi bi-box-seam"></i> Shipper
+                            {% elif user.role == 'carrier' %}
+                                <i class="bi bi-truck"></i> Carrier
+                            {% elif user.is_superuser %}
+                                <i class="bi bi-shield-lock"></i> Admin
+                            {% else %}
+                                <i class="bi bi-person"></i> User
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <form method="post" action="{% url 'accounts:logout' %}" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-sm btn-outline-light" 
+                                style="border-color: rgba(255,255,255,0.3);"
+                                onclick="return confirm('Are you sure you want to logout?');">
+                            <i class="bi bi-box-arrow-right"></i>
+                        </button>
+                    </form>
+                </div>
+                {% else %}
+                <div class="d-flex gap-2">
+                    <a href="{% url 'accounts:login' %}" class="btn btn-outline-light">
+                        <i class="bi bi-box-arrow-in-right"></i> Login
+                    </a>
+                    <a href="{% url 'accounts:register' %}" class="btn btn-accent">
+                        <i class="bi bi-person-plus"></i> Sign Up
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</nav>

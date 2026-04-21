@@ -1,0 +1,326 @@
+{% extends 'base/base.html' %}
+
+{% block title %}{{ title }} | FreightMatch{% endblock %}
+
+{% block extra_css %}
+<style>
+    .form-section {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    
+    .form-section h3 {
+        color: var(--primary-color);
+        font-size: 1.3rem;
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid var(--accent-color);
+    }
+    
+    .required-field::after {
+        content: '*';
+        color: #dc3545;
+        margin-left: 4px;
+    }
+    
+    .help-text {
+        font-size: 0.8rem;
+        color: #6c757d;
+        margin-top: 0.25rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <!-- Page Header -->
+            <div class="mb-4">
+                <h1 class="display-5 fw-bold" style="color: var(--primary-color);">
+                    <i class="bi bi-box-seam"></i> {{ title }}
+                </h1>
+                <p class="text-muted">Fill in the details below to post your cargo listing</p>
+            </div>
+            
+            <!-- Form -->
+            <form method="post">
+                {% csrf_token %}
+                
+                <!-- Display non-field errors -->
+                {% if form.non_field_errors %}
+                <div class="alert alert-danger">
+                    <i class="bi bi-exclamation-triangle-fill"></i>
+                    {% for error in form.non_field_errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+                {% endif %}
+                
+                <!-- Display form errors summary -->
+                {% if form.errors %}
+                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    <strong>Please correct the following errors:</strong>
+                    <ul class="mb-0 mt-2">
+                        {% for field, errors in form.errors.items %}
+                            {% for error in errors %}
+                                <li>{{ field|title }}: {{ error }}</li>
+                            {% endfor %}
+                        {% endfor %}
+                    </ul>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+                {% endif %}
+                
+                <!-- Basic Information Section -->
+                <div class="form-section">
+                    <h3><i class="bi bi-info-circle"></i> Basic Information</h3>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.title.id_for_label }}" class="form-label required-field">
+                            Load Title
+                        </label>
+                        {{ form.title }}
+                        <div class="help-text">Brief description of your cargo (e.g., Electronics, Furniture, etc.)</div>
+                        {% if form.title.errors %}
+                            <div class="alert alert-danger mt-1">{{ form.title.errors }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.description.id_for_label }}" class="form-label">Description</label>
+                        {{ form.description }}
+                        <div class="help-text">Detailed information about the cargo, special handling requirements, etc.</div>
+                        {% if form.description.errors %}
+                            <div class="alert alert-danger mt-1">{{ form.description.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <!-- Route Information Section -->
+                <div class="form-section">
+                    <h3><i class="bi bi-geo-alt"></i> Route Information</h3>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.pickup_city.id_for_label }}" class="form-label required-field">
+                                Pickup City
+                            </label>
+                            {{ form.pickup_city }}
+                            {% if form.pickup_city.errors %}
+                                <div class="alert alert-danger mt-1">{{ form.pickup_city.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.pickup_address.id_for_label }}" class="form-label">
+                                Pickup Address (Optional)
+                            </label>
+                            {{ form.pickup_address }}
+                            {% if form.pickup_address.errors %}
+                                <div class="alert alert-danger mt-1">{{ form.pickup_address.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.delivery_city.id_for_label }}" class="form-label required-field">
+                                Delivery City
+                            </label>
+                            {{ form.delivery_city }}
+                            {% if form.delivery_city.errors %}
+                                <div class="alert alert-danger mt-1">{{ form.delivery_city.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.delivery_address.id_for_label }}" class="form-label">
+                                Delivery Address (Optional)
+                            </label>
+                            {{ form.delivery_address }}
+                            {% if form.delivery_address.errors %}
+                                <div class="alert alert-danger mt-1">{{ form.delivery_address.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.pickup_date.id_for_label }}" class="form-label required-field">
+                                Pickup Date
+                            </label>
+                            {{ form.pickup_date }}
+                            {% if form.pickup_date.errors %}
+                                <div class="alert alert-danger mt-1">{{ form.pickup_date.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.pickup_time.id_for_label }}" class="form-label">
+                                Pickup Time (Optional)
+                            </label>
+                            {{ form.pickup_time }}
+                            {% if form.pickup_time.errors %}
+                                <div class="alert alert-danger mt-1">{{ form.pickup_time.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.delivery_date.id_for_label }}" class="form-label">
+                                Delivery Date (Optional)
+                            </label>
+                            {{ form.delivery_date }}
+                            {% if form.delivery_date.errors %}
+                                <div class="alert alert-danger mt-1">{{ form.delivery_date.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.delivery_time.id_for_label }}" class="form-label">
+                                Delivery Time (Optional)
+                            </label>
+                            {{ form.delivery_time }}
+                            {% if form.delivery_time.errors %}
+                                <div class="alert alert-danger mt-1">{{ form.delivery_time.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Cargo Details Section -->
+                <div class="form-section">
+                    <h3><i class="bi bi-box"></i> Cargo Details</h3>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.cargo_type.id_for_label }}" class="form-label required-field">
+                                Cargo Type
+                            </label>
+                            {{ form.cargo_type }}
+                            {% if form.cargo_type.errors %}
+                                <div class="alert alert-danger mt-1">{{ form.cargo_type.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.weight.id_for_label }}" class="form-label required-field">
+                                Weight (tons)
+                            </label>
+                            {{ form.weight }}
+                            {% if form.weight.errors %}
+                                <div class="alert alert-danger mt-1">{{ form.weight.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.volume.id_for_label }}" class="form-label">
+                                Volume (m³) - Optional
+                            </label>
+                            {{ form.volume }}
+                            {% if form.volume.errors %}
+                                <div class="alert alert-danger mt-1">{{ form.volume.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="{{ form.length.id_for_label }}" class="form-label">
+                                Length (m) - Optional
+                            </label>
+                            {{ form.length }}
+                            {% if form.length.errors %}
+                                <div class="alert alert-danger mt-1">{{ form.length.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-4 mb-3">
+                            <label for="{{ form.width.id_for_label }}" class="form-label">
+                                Width (m) - Optional
+                            </label>
+                            {{ form.width }}
+                            {% if form.width.errors %}
+                                <div class="alert alert-danger mt-1">{{ form.width.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-4 mb-3">
+                            <label for="{{ form.height.id_for_label }}" class="form-label">
+                                Height (m) - Optional
+                            </label>
+                            {{ form.height }}
+                            {% if form.height.errors %}
+                                <div class="alert alert-danger mt-1">{{ form.height.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Pricing Section -->
+                <div class="form-section">
+                    <h3><i class="bi bi-currency-dollar"></i> Pricing</h3>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.price.id_for_label }}" class="form-label">
+                                Offered Price (USD) - Optional
+                            </label>
+                            {{ form.price }}
+                            {% if form.price.errors %}
+                                <div class="alert alert-danger mt-1">{{ form.price.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <div class="form-check mt-4 pt-2">
+                                {{ form.price_negotiable }}
+                                <label for="{{ form.price_negotiable.id_for_label }}" class="form-check-label">
+                                    Price is negotiable
+                                </label>
+                            </div>
+                            {% if form.price_negotiable.errors %}
+                                <div class="alert alert-danger mt-1">{{ form.price_negotiable.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Listing Duration Section -->
+                <div class="form-section">
+                    <h3><i class="bi bi-calendar"></i> Listing Duration</h3>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.expires_at.id_for_label }}" class="form-label">
+                            Expiration Date (Optional)
+                        </label>
+                        {{ form.expires_at }}
+                        <div class="help-text">Leave empty for no expiration date</div>
+                        {% if form.expires_at.errors %}
+                            <div class="alert alert-danger mt-1">{{ form.expires_at.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <!-- Form Actions -->
+                <div class="d-flex gap-3 justify-content-end">
+                    <a href="{% url 'my_loads' %}" class="btn btn-outline-secondary btn-lg">
+                        <i class="bi bi-x-circle"></i> Cancel
+                    </a>
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <i class="bi bi-check-circle"></i> {% if cargo %}Update Load{% else %}Post Load{% endif %}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

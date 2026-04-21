@@ -1,0 +1,255 @@
+{% extends 'base/base.html' %}
+
+{% block title %}{{ title }} | FreightMatch{% endblock %}
+
+{% block extra_css %}
+<style>
+    .trucks-table {
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    
+    .trucks-table thead {
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+        color: white;
+    }
+    
+    .trucks-table thead th {
+        padding: 1rem;
+        font-weight: 600;
+        border: none;
+    }
+    
+    .trucks-table tbody tr:hover {
+        background-color: #f8f9fa;
+    }
+    
+    .trucks-table td {
+        padding: 1rem;
+        vertical-align: middle;
+    }
+    
+    .status-badge {
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        display: inline-block;
+    }
+    
+    .status-available {
+        background: #d4edda;
+        color: #155724;
+    }
+    
+    .status-booked {
+        background: #fff3cd;
+        color: #856404;
+    }
+    
+    .status-in_transit {
+        background: #d1ecf1;
+        color: #0c5460;
+    }
+    
+    .status-unavailable {
+        background: #f8d7da;
+        color: #721c24;
+    }
+    
+    .filter-bar {
+        background: white;
+        border-radius: 12px;
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        background: white;
+        border-radius: 12px;
+    }
+    
+    .empty-state i {
+        font-size: 4rem;
+        color: #dee2e6;
+        margin-bottom: 1rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="display-5 fw-bold" style="color: var(--primary-color);">
+                <i class="bi bi-truck"></i> My Trucks
+            </h1>
+            <p class="text-muted">Manage your transport listings</p>
+        </div>
+        <a href="{% url 'post_truck' %}" class="btn btn-primary btn-lg">
+            <i class="bi bi-plus-circle"></i> Post New Truck
+        </a>
+    </div>
+    
+    <!-- Filter Bar -->
+    <div class="filter-bar">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <div class="d-flex gap-2 align-items-center">
+                    <label class="fw-bold mb-0">Filter by status:</label>
+                    <div class="btn-group" role="group">
+                        <a href="{% url 'my_trucks' %}" class="btn btn-outline-secondary btn-sm {% if not request.GET.status %}active{% endif %}">
+                            All
+                        </a>
+                        <a href="?status=available" class="btn btn-outline-success btn-sm {% if request.GET.status == 'available' %}active{% endif %}">
+                            Available
+                        </a>
+                        <a href="?status=booked" class="btn btn-outline-warning btn-sm {% if request.GET.status == 'booked' %}active{% endif %}">
+                            Booked
+                        </a>
+                        <a href="?status=in_transit" class="btn btn-outline-info btn-sm {% if request.GET.status == 'in_transit' %}active{% endif %}">
+                            In Transit
+                        </a>
+                        <a href="?status=unavailable" class="btn btn-outline-danger btn-sm {% if request.GET.status == 'unavailable' %}active{% endif %}">
+                            Unavailable
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 text-end">
+                <span class="text-muted">
+                    <i class="bi bi-truck"></i> Total: {{ page_obj.paginator.count }} trucks
+                </span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Trucks Table -->
+    {% if transports %}
+    <div class="table-responsive trucks-table">
+        <table class="table table-hover mb-0">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Title</th>
+                    <th>Location</th>
+                    <th>Available From</th>
+                    <th>Capacity</th>
+                    <th>Price</th>
+                    <th>Status</th>
+                    <th>Views</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for transport in transports %}
+                <tr>
+                    <td>#{{ transport.id }}</td>
+                    <td>
+                        <strong>{{ transport.title|truncatechars:30 }}</strong>
+                        <br>
+                        <small class="text-muted">{{ transport.transport_type.name }}</small>
+                    </td>
+                    <td>
+                        <i class="bi bi-geo-alt"></i> {{ transport.available_city_from }}
+                        {% if transport.available_city_to %}
+                            <br><i class="bi bi-arrow-right"></i> {{ transport.available_city_to }}
+                        {% endif %}
+                    </td>
+                    <td>{{ transport.available_from_date|date:"M d, Y" }}</td>
+                    <td>{{ transport.capacity_weight }} t</td>
+                    <td>
+                        {% if transport.price_per_km %}
+                            ${{ transport.price_per_km|floatformat:2 }}/km
+                        {% elif transport.fixed_price %}
+                            ${{ transport.fixed_price|floatformat:2 }}
+                        {% else %}
+                            -
+                        {% endif %}
+                        {% if transport.price_negotiable %}
+                            <br><small class="text-success">negotiable</small>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <span class="status-badge status-{{ transport.status.code }}">
+                            {{ transport.status.name }}
+                        </span>
+                    </td>
+                    <td>
+                        <i class="bi bi-eye"></i> {{ transport.views_count }}<br>
+                        <i class="bi bi-chat"></i> {{ transport.contact_count }}
+                    </td>
+                    <td>
+                        <div class="btn-group" role="group">
+                            <a href="{% url 'truck_detail' transport.id %}" class="btn btn-sm btn-outline-info" title="View">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                            <a href="{% url 'edit_truck' transport.id %}" class="btn btn-sm btn-outline-primary" title="Edit">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            <a href="{% url 'delete_truck' transport.id %}" class="btn btn-sm btn-outline-danger" title="Delete" 
+                               onclick="return confirm('Are you sure you want to delete this truck?');">
+                                <i class="bi bi-trash"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    <!-- Pagination -->
+    {% if page_obj.has_other_pages %}
+    <nav aria-label="Page navigation" class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}">
+                    <i class="bi bi-chevron-left"></i> Previous
+                </a>
+            </li>
+            {% endif %}
+            
+            {% for num in page_obj.paginator.page_range %}
+                {% if page_obj.number == num %}
+                <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ num }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}">
+                        {{ num }}
+                    </a>
+                </li>
+                {% endif %}
+            {% endfor %}
+            
+            {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}">
+                    Next <i class="bi bi-chevron-right"></i>
+                </a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+    
+    {% else %}
+    <!-- Empty State -->
+    <div class="empty-state">
+        <i class="bi bi-truck"></i>
+        <h3>No trucks found</h3>
+        <p class="text-muted">You haven't posted any transport listings yet.</p>
+        <a href="{% url 'post_truck' %}" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Post Your First Truck
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
