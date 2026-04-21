@@ -26,7 +26,6 @@ class CustomUserAdmin(UserAdmin):
         'company_name', 
         'phone',
         'rating_stars',
-        'is_approved_badge',
         'is_active',
         'registration_date'
     )
@@ -132,18 +131,7 @@ class CustomUserAdmin(UserAdmin):
         )
     get_role_badge.short_description = 'Role'
     get_role_badge.admin_order_field = 'role'
-    
-    def is_approved_badge(self, obj):
-        if obj.is_approved:
-            return format_html(
-                '<span style="color: green;">✓ Approved</span>'
-            )
-        return format_html(
-            '<span style="color: orange;">⏳ Pending</span>'
-        )
-    is_approved_badge.short_description = 'Status'
-    is_approved_badge.admin_order_field = 'is_approved'
-    
+       
     def rating_stars(self, obj):
         if obj.rating == 0:
             return 'No ratings'

@@ -1,6 +1,6 @@
 {% extends 'base/base.html' %}
 
-{% block title %}Laipni lūdzam conteiner.lv{% endblock %}
+{% block title %}Welcome to conteiner.lv{% endblock %}
 
 {% block content %}
 <div class="container">
@@ -9,48 +9,48 @@
         <div class="col-lg-8 mx-auto text-center">
             <h1 class="display-4 fw-bold mb-4" style="color: var(--primary-color);">
                 {% if user.is_authenticated %}
-                    Laipni lūdzam atpakaļ, {{ user.get_full_name|default:user.username }}!
+                    Welcome back, {{ user.get_full_name|default:user.username }}!
                 {% else %}
-                    Savienojiet nosūtītājus un pārvadātājus
+                    Connect Shippers & Carriers
                 {% endif %}
             </h1>
             <p class="lead mb-4">
-                Inteliģentais loģistikas tirgus, kur nosūtītāji atrod uzticamus pārvadātājus 
-                un pārvadātāji atrod ienesīgas kravas.
+                The intelligent logistics marketplace where shippers find reliable carriers 
+                and carriers discover profitable loads.
             </p>
             
             {% if user.is_authenticated %}
                 <div class="d-flex gap-3 justify-content-center">
                     {% if user.role == 'shipper' %}
                     <a href="{% url 'post_load' %}" class="btn btn-primary btn-lg px-4">
-                        <i class="bi bi-box-seam"></i> Pievienot jaunu kravu
+                        <i class="bi bi-box-seam"></i> Post New Load
                     </a>
                     <a href="{% url 'browse_trucks' %}" class="btn btn-outline-primary btn-lg px-4">
-                        <i class="bi bi-search"></i> Atrast transportu
+                        <i class="bi bi-search"></i> Find Transport
                     </a>
                     {% elif user.role == 'carrier' %}
                     <a href="{% url 'post_truck' %}" class="btn btn-accent btn-lg px-4">
-                        <i class="bi bi-truck"></i> Pievienot pieejamo kravas automašīnu
+                        <i class="bi bi-truck"></i> Post Available Truck
                     </a>
                     <a href="{% url 'browse_loads' %}" class="btn btn-outline-primary btn-lg px-4">
-                        <i class="bi bi-search"></i> Atrast kravas
+                        <i class="bi bi-search"></i> Find Loads
                     </a>
                     {% else %}
                     <a href="#" class="btn btn-primary btn-lg px-4">
-                        <i class="bi bi-box-seam"></i> Pievienot kravu
+                        <i class="bi bi-box-seam"></i> Post Load
                     </a>
                     <a href="#" class="btn btn-accent btn-lg px-4">
-                        <i class="bi bi-truck"></i> Pievienot kravas automašīnu
+                        <i class="bi bi-truck"></i> Post Truck
                     </a>
                     {% endif %}
                 </div>
             {% else %}
                 <div class="d-flex gap-3 justify-content-center">
                     <a href="{% url 'accounts:login' %}" class="btn btn-primary btn-lg px-4">
-                        <i class="bi bi-box-arrow-in-right"></i> Autorizēties, lai sāktu
+                        <i class="bi bi-box-arrow-in-right"></i> Login to Start
                     </a>
                     <a href="{% url 'browse_listings' %}" class="btn btn-outline-secondary btn-lg px-4">
-                        <i class="bi bi-search"></i> Pārlūkot sludinājumus
+                        <i class="bi bi-search"></i> Browse Listings
                     </a>
                 </div>
             {% endif %}
@@ -60,8 +60,8 @@
     <!-- How It Works -->
     <div class="row mb-5">
         <div class="col-12 text-center mb-4">
-            <h2 class="fw-bold">Kā tas darbojas</h2>
-            <p class="text-muted">Vienkāršs process savienošanai un transportēšanai</p>
+            <h2 class="fw-bold">How It Works</h2>
+            <p class="text-muted">Simple process to connect and transport</p>
         </div>
         
         <div class="col-md-4 mb-4">
@@ -69,10 +69,10 @@
                 <div class="mb-3">
                     <i class="bi bi-person-plus fs-1" style="color: var(--accent-color);"></i>
                 </div>
-                <h4>1. Reģistrējieties</h4>
+                <h4>1. Sign Up</h4>
                 <p class="text-muted">
-                    Izveidojiet savu kontu kā nosūtītājs vai pārvadātājs. 
-                    Aizpildiet sava uzņēmuma profilu.
+                    Create your account as Shipper or Carrier. 
+                    Complete your company profile.
                 </p>
             </div>
         </div>
@@ -82,10 +82,10 @@
                 <div class="mb-3">
                     <i class="bi bi-megaphone fs-1" style="color: var(--accent-color);"></i>
                 </div>
-                <h4>2. Pievienojiet vai meklējiet</h4>
+                <h4>2. Post or Search</h4>
                 <p class="text-muted">
-                    Nosūtītājs: Pievienojiet savas kravas. Pārvadātājs: Pievienojiet savas kravas automašīnas 
-                    vai meklējiet pieejamās kravas.
+                    Shipper: Post your loads. Carrier: Post your trucks 
+                    or search for available loads.
                 </p>
             </div>
         </div>
@@ -95,10 +95,10 @@
                 <div class="mb-3">
                     <i class="bi bi-chat-dots fs-1" style="color: var(--accent-color);"></i>
                 </div>
-                <h4>3. Savienojieties un transportējiet</h4>
+                <h4>3. Connect & Transport</h4>
                 <p class="text-muted">
-                    Sazinieties ar partneriem tieši, izmantojot mūsu ziņojumu sistēmu. 
-                    Vienojieties par noteikumiem un sāciet piegādi.
+                    Contact partners directly through our messaging system. 
+                    Agree on terms and start shipping.
                 </p>
             </div>
         </div>
@@ -108,20 +108,20 @@
     <div class="row mb-4">
         <div class="col-md-4 mb-3">
             <div class="card text-center p-3">
-                <h3 class="text-primary fw-bold mb-0">2 500+</h3>
-                <p class="text-muted mb-0">Aktīvās kravas</p>
+                <h3 class="text-primary fw-bold mb-0">2,500+</h3>
+                <p class="text-muted mb-0">Active Loads</p>
             </div>
         </div>
         <div class="col-md-4 mb-3">
             <div class="card text-center p-3">
-                <h3 class="fw-bold mb-0" style="color: var(--accent-color);">1 800+</h3>
-                <p class="text-muted mb-0">Pieejamās kravas automašīnas</p>
+                <h3 class="fw-bold mb-0" style="color: var(--accent-color);">1,800+</h3>
+                <p class="text-muted mb-0">Available Trucks</p>
             </div>
         </div>
         <div class="col-md-4 mb-3">
             <div class="card text-center p-3">
                 <h3 class="text-success fw-bold mb-0">950+</h3>
-                <p class="text-muted mb-0">Verificēti uzņēmumi</p>
+                <p class="text-muted mb-0">Verified Companies</p>
             </div>
         </div>
     </div>
@@ -132,9 +132,9 @@
         <div class="col-12">
             <div class="alert alert-success">
                 <i class="bi bi-check-circle-fill me-2"></i>
-                <strong>Autorizēts kā:</strong> {{ user.username }} 
-                (Loma: {{ user.role|default:"Nav iestatīta" }}) - 
-                <a href="#" class="alert-link">Doties uz savu informācijas paneli</a>
+                <strong>Authenticated as:</strong> {{ user.username }} 
+                (Role: {{ user.role|default:"Not set" }}) - 
+                <a href="#" class="alert-link">Go to your dashboard</a>
             </div>
         </div>
     </div>

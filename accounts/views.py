@@ -13,8 +13,7 @@ def register(request):
             # We do not log in automatically, as confirmation is required
             messages.success(
                 request, 
-                'Thank you for registering! Your account has been created and is pending approval. '
-                'You will receive an email notification once an administrator approves your account.'
+                'Thank you for registering! Your account has been created.'
             )
             return redirect('accounts:login')
     else:
